@@ -6,13 +6,13 @@
 
 This project was developed in the context of my bachelor's thesis for the Applied Computer Science degree programme at Heilbronn University.
 
-It is a sofware suite consisting of a backend application, which runs on the microcontroller Raspberry Pi Pico W RP2040 an a frontend android application
+It is a sofware suite consisting of a backend application, which runs on the microcontroller Raspberry Pi Pico W RP2040 and a frontend android application
 
 It is used to perform high precision GNSS measurements using Real-Time-Kinematics(RTK).
 
 The backend project is located in the /de.hhn.gnss_rtk_rover directory.
 The frontend project is located in the /de.hhn.gnss_rtk_rover_client_android directory.
-In the /Evaluierung directory is the test raw data, which was used in my bachelor thesis
+In the /Evaluierung directory is the test raw data, which was used in my bachelor thesis.
 The firmware and the reset file for Pi Pico W is located in the /pi_pico_w_firmware directory
 
 ### __2. Requirements__
@@ -35,22 +35,18 @@ For using the NTRIP Protocol, you need access to a GNSS correction service provi
 
 ### __1. Installing Thonny IDE__
 ***
-On Ubuntu, the first step is to open the terminal and run the command
+On Ubuntu, the first step is to open the terminal and run the following command, for updating the mackage manager
 ```shell
 $ sudo apt update
 ```
-to update the package manager repository.
-Afterwards you can update the package manager with the command
+Afterwards you can install thonny with the command
 ```shell
 $ sudo apt install thonny
 ```
-to start the installation of the Thonny IDE.
-
-As soon as the installation is complete, the command
+Now you can start Thonny with:
 ```shell
 $ thonny
 ```
-the program is started.
 
 Now the Raspberry Pi Pico W is connected to the computer.
 
