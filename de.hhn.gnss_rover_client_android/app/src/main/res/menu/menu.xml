@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/ic_osm_map"
+        android:icon="@drawable/ic_baseline_map_24"
+        android:title="@string/title_menu_map"/>
+
+    <item
+        android:id="@+id/satellitenkarte"
+        android:icon="@drawable/ic_baseline_navigation_24"
+        android:title="Satellitenkarte"/>
+
+    <item
+        android:id="@+id/satellitentabelle"
+        android:icon="@drawable/ic_baseline_table_rows_24"
+        android:title="Satellitentabelle"/>
+    <item
+        android:id="@+id/ic_settings"
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="@string/title_menu_settings"/>
+</menu>

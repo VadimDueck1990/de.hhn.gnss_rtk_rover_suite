@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.SettingsFragment"
+    android:id="@+id/settings_fragment">
+
+    <TextView
+        android:id="@+id/title_sat_systems"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/header_used_sat_systems"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="28dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <CheckBox
+        android:id="@+id/cb_gps"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/title_gps"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_sat_systems" />
+
+    <CheckBox
+        android:id="@+id/cb_glonass"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/title_glonass"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cb_gps" />
+
+    <CheckBox
+        android:id="@+id/cb_galileo"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/title_galileo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cb_glonass" />
+
+    <CheckBox
+        android:id="@+id/cb_bds"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/title_bds"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cb_galileo" />
+
+    <Button
+        android:id="@+id/set_sat_systems_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/btn_updaterate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cb_galileo" />
+
+    <TextView
+        android:id="@+id/header_rtcm_enable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/header_rtcm_enable"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/set_sat_systems_btn" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/rtcm_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/empty_string"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/header_rtcm_enable" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="30dp"
+        android:text="@string/title_switch_rtcm"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/rtcm_switch"
+        app:layout_constraintTop_toBottomOf="@+id/header_rtcm_enable"  />
+
+    <TextView
+        android:id="@+id/header_ip_addr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/title_ip_addr"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rtcm_switch" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/ip_input_field"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:boxBackgroundColor="#FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/header_ip_addr">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/ip_input_field_text"
+            android:inputType="numberDecimal"
+            android:hint="50 - 5000"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/update_rate_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/btn_updaterate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/header_ip_addr" />
+
+    <TextView
+        android:id="@+id/header_file_recording"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="Datenaufzeichnung"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/update_rate_btn" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/file_record_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/empty_string"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/header_file_recording" />
+
+    <TextView
+        android:id="@+id/label_file_record_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="30dp"
+        android:text="@string/file_record_label"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@+id/file_record_switch"
+        app:layout_constraintTop_toBottomOf="@+id/header_file_recording"  />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
