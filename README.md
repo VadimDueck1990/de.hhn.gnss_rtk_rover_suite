@@ -31,9 +31,6 @@ For using the NTRIP Protocol, you need access to a GNSS correction service provi
 
 ## Installation guide (Backend)
 
-If you need help with setting up your raspberry pi for the first time, please check out this [tutorial](https://projects.raspberrypi.org/en/projects/raspberry-pi-setting-up)
-
-Once your raspberry pi is ready, follow these steps to set up the backend.
 
 
 ### __1. Installing Thonny IDE__
@@ -87,10 +84,7 @@ The installation of MicroPython is very user-friendly and consists of three main
         1. scroll down the homepage until you see the headings Computers, Accessories and Microcontrollers. The Microcontrollers heading should have a colored underline.
         2. click on MicroPython - Getting started with Micropython.
         3. click on Download the MicroPython UF2 file. This will download the MicroPython firmware for the Pico W. 4.
-        4. there are separate download directories for MicroPython for the Raspberry Pi Pico and Pico W:
-            
-            https://micropython.org/download/rp2-pico-w/
-        
+        4. there are separate download directories for MicroPython for the Raspberry Pi Pico and Pico W: ![Firmware](https://micropython.org/download/rp2-pico-w/)
         There, under Firmware / Releases, download the file marked (latest).
         Note: MicroPython for the Raspberry Pi Pico is board specific. There are different MicroPython versions for the Pico and the Pico W. When saving the firmware, make sure you save the correct version to the board, otherwise important libraries for networking will be missing.
     3. install MicroPython on the Pico W
