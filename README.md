@@ -1,21 +1,4 @@
 # GNSS Navigation Status
-## Table of Contents
-1. [Overview](#overview)
-    - [1.1. What does this programm do?](#1-what-does-this-programm-do)
-    - [1.2. Requirements](#2-requirements)
-2. [Installation guide (Backend)](#installation-guide-backend)
-    - [2.1. Cloning the Repository](#1-cloning-the-repository)
-    - [2.2. Interface Configuration](#2-interface-configuration)
-    - [2.3. Python Version](#3-python-version)
-    - [2.4. Additional Python Package](#4-additional-python-packages)
-    - [2.5. Receiver Firmware](#5-receiver-firmware)
-    - [2.6. Receiver Configuration](#6-receiver-configuration)
-    - [2.7. Starting and Stopping](#7-starting-and-stopping)
-3. [Quick Start Guide (Frontend)](#quick-start-guide-frontend)
-4. [RTCM and NTRIP Configuration](#rtcm-and-ntrip-configuration)
-5. [Links](#links)
-
-***
 
 ## Overview
 
@@ -23,13 +6,14 @@
 
 This project was developed in the context of my bachelor's thesis for the Applied Computer Science degree programme at Heilbronn University.
 
-The required data, such as position and Satellites are received by the u-blox ZED-F9R pHAT and then passed on to the Raspberry Pi via UART to be further processed in the backend and sent on to the frontend application (Android).
+It is a sofware suite consisting of a backend application, which runs on the microcontroller Raspberry Pi Pico W RP2040 an a frontend android application
 
-The backend also serves as an interface for the frontend to communicate with the receiver to configure it. You can configure if which satellite systems you want to use to calculate your position or if you want to use rtcm data.
+It is used to perform high precision GNSS measurements using Real-Time-Kinematics(RTK).
 
-The Ublox Python Package by SparkFun Electronics was used for the implementation and extended with some additional functions, which were not provided.
-
-In order to use RTCM correction data, a connection to an RTCM provider is established via NTRIP Client and the correction data received is sent back to the pHAT, which then computes a centimetre-precise position.
+The backend project is located in the /de.hhn.gnss_rtk_rover directory.
+The frontend project is located in the /de.hhn.gnss_rtk_rover_client_android directory.
+In the /Evaluierung directory is the test raw data, which was used in my bachelor thesis
+The firmware and the reset file for Pi Pico W is located in the /pi_pico_w_firmware directory
 
 ### __2. Requirements__
 
@@ -39,17 +23,11 @@ Frontend:
 * Android Smartphone (Minimum API Level 30: Android 11.0)
 
 Backend:
-* Raspberry Pi 4 - 4GB Model
-* SparkFun GPS-RTK Dead Reckoning pHAT for Raspberry Pi
-* 15W USB-C power supply
-* Micro SD card with Raspberry Pi OS installed
-* keyboard and mouse
-* GNSS Multi-Band Antenna (SMA)
-* Interface Cable SMA to U.FL
+* Raspberry Pi Pico W RP2040
+* SparkFun GPS-RTK2 ZED-F9P GNSS-Receiver
 
-Other: (Only if you wish to use rtcm)
-* Credentials with a RTCM provider such as SAPOS
-* NTRIP Client such as RTKNAVI
+
+For using the NTRIP Protocol, you need access to a GNSS correction service provider such as SAPOS
 
 ## Installation guide (Backend)
 
@@ -58,194 +36,101 @@ If you need help with setting up your raspberry pi for the first time, please ch
 Once your raspberry pi is ready, follow these steps to set up the backend.
 
 
-### __1. Cloning the Repository__
+### __1. Installing Thonny IDE__
 ***
-If you do not have git installed, install it first
+On Ubuntu, the first step is to open the terminal and run the command
 ```shell
 $ sudo apt update
-$ sudo apt install git
 ```
-
-Go to the directory where you want to clone the repository to
+to update the package manager repository.
+Afterwards you can update the package manager with the command
 ```shell
-$ cd desiredFolder/
+$ sudo apt install thonny
 ```
-Clone it via
+to start the installation of the Thonny IDE.
+
+As soon as the installation is complete, the command
 ```shell
-$ git clone https://github.com/alschube/gnss-navigation-status.git
+$ thonny
 ```
+the program is started.
 
-### __2. Interface Configuration__
-***
-Ensure that GPIO Remote is activated.
+Now the Raspberry Pi Pico W is connected to the computer.
 
-You can do this via GUI under Settings > Interfaces (see picture below)
-![Raspberry Pi Config](https://gpiozero.readthedocs.io/en/stable/_images/raspi-config.png)
+In Thonny, select the Interpreter tab via Run > Configure Interpreter.
+In the Interpreter drop-down list, select the MicroPython (Raspberry Pi Pico) option. The port selection can be left as it is so that the Pico is automatically detected. To finish the setup, click OK.
 
-or you can do it on the command line and enable  Remote GPIO. 
-``` shell
-$ sudo raspi-config 
-```
-
-### __3. Python Version__
-***
-
-__Make sure you have at least Python Version 3.7 installed. If so, you can skip this step and go to the [next chapter](#4-additional-python-packages).__
-
-Otherwise follow the instructions below to install Python 3.8.4, which i worked with.
-
-The first step is to install some required packages:
+Remark:
+On Ubuntu, it may happen that the USB port is not detected and an error in the form of "Could not open serial port /dev/ttyUSB0" is thrown.
+This can be fixed by adding the user to the dialout user group as it is missing permissions. The command for this is:
 ```shell
-$ sudo apt install libffi-dev libbz2-dev liblzma-dev libsqlite3-dev libncurses5-
-dev libgdbm-dev zlib1g-dev libreadline-dev libssl-dev tk-dev build-essential libncursesw5-dev libc6-dev openssl
+$ sudo adduser username dialout
 ```
 
-To download version 3.8.4, type the following command:
-``` shell
-$ wget https://www.python.org/ftp/python/3.8.4/Python-3.8.4.tar.xz
-``` 
+The Python shell (also called REPL) will now update to show that the Pico W is connected and working. The lower right corner of the Thonny window should now show the interpreter and the USB port to which the Pico W is connected, i.E:
+MicroPython (Raspberry Pi Pico) - dev/ttyACM0
+For testing you can write a print function that prints "Hello World". If you press Enter, the Pico W should execute the code.
 
-These are unpacked with:
-``` shell
-$ tar xf Python-3.8.4.tar.x
-``` 
-
-Navigate to the unzipped folder:
-``` shell
-$ cd Python-3.8.4
-``` 
-
-And prepares the configuration. This process can take a few minutes.
-``` shell
-$ ./configure
-``` 
-
-The installation file is created via:
-``` shell
-$ make -j -l 4
-``` 
-
-After all, you install them with:
-``` shell
-$ sudo make altinstall
-``` 
-
-In order not to have to enter python3.8 or pip3.8 all the time, you can add aliases.
-``` shell
-$ echo "alias python3=python3.8" >> ~/.bashrc
-$ echo "alias pip3=pip3.8" >> ~/.bashrc
-``` 
-
-Use the following command to load the new settings so that they take effect.
-``` shell
-$ source ~/.bashrc
-``` 
-
-### __4. Additional Python Packages__
-***
-In order to run the programm you also need some additional python packages to install:
-``` shell
-$ pip3 install serial
-$ pip3 install spidev
-```
-
-### __5. Receiver Firmware__
-__If you got a new ZED-F9R you probably need to update the firmware version.__
-Sometimes they are delivered with a test firmware version only and need to be updated as it was in my case.
-
-To do so, download the latest firmware version from [ZED-F9R Module Firmware](https://www.u-blox.com/en/product/zed-f9r-module?field_file_category=223&field_file_lifecycle=All&field_file_legacy_single=0&edit-submit-product-information=Go#tab-documentation-resources). You'll find it under Documentation & Resources > Firmware Update > ZED-F9R HPS 1.20 firmware
+Now the Thonny IDE is ready for MicroPython development. On the left side, two tool windows are displayed. The upper one is a file explorer for the desktop computer and the lower one is the file explorer for the Pico W.
 
 
-
-After downloading you need to install it via u-center software.
-(Unless you haven't already installed, download from [here](https://www.u-blox.com/en/product/u-center) and install it)
-
-To install the firmware, open u-center, select the COM-Port where the receiver is connected (directly connect it via usb-c to your pc) and once the connection is established you can click Tools > Firmware Update
-
-![Firmware Update](https://raw.githubusercontent.com/alschube/Bachelorarbeit/dev/LaTeX%20Vorlage/Bilder/firmware-update.png?token=AN4NRRNP7FZYPT6ZFUQI65TBLL4JE)
-
-Select the downloaded firmware file, the baudrate (typically 115200), please check 'Enter safeboot before update', 'send training sequence' and 'use chip erase' options.
-
-![Firmware Update Window](https://raw.githubusercontent.com/alschube/Bachelorarbeit/dev/LaTeX%20Vorlage/Bilder/u-center-firmware.png?token=AN4NRRK5XMGVJTOHIMA6O7LBLL4PW)
-
-Click Send and the firmware will be uploaded.
-
-
-
-### __6. Receiver Configuration__
-***
-The Receiver needs to be configured once to enable all required messages and protocols.
-
-
-To do so, the provided setup.py script is sending several messages one after the other to the receiver over the UART1 of the Pi.
-
-
-The script can be found in the backend folder.
-
-Simply run it by opening cmd in the backend folder and typing:
-```shell
-$ python setup.py
-```
-
-### __7. Starting and Stopping__
+### __2. Flash MicroPython Firmware to the Pi Pico W__
 ***
 
-To finally run the backend, go to the backend folder and run it via:
-```shell
-$ python main_backend.py
-```
+The installation of MicroPython is very user-friendly and consists of three main steps:
+    1. connect the Pico W as a drive to the desktop computer.
+        1. opening a file explorer showing newly connected drives.
+        2. connect the Pico W via USB while holding down the BOOTSEL button on the Pico W. 3.
+        3. now the Pico W should be listed as RPI-RP2 and contain the files INDEX.HTM and INFO_UF2.TXT.
+        4. via the file INDEX.HTM you should now be able to get to the homepage of the Raspberry Foundation.
+    2. download MicroPython manually
+        1. scroll down the homepage until you see the headings Computers, Accessories and Microcontrollers. The Microcontrollers heading should have a colored underline.
+        2. click on MicroPython - Getting started with Micropython.
+        3. click on Download the MicroPython UF2 file. This will download the MicroPython firmware for the Pico W. 4.
+        4. there are separate download directories for MicroPython for the Raspberry Pi Pico and Pico W:
+            
+            https://micropython.org/download/rp2-pico-w/
+        
+        There, under Firmware / Releases, download the file marked (latest).
+        Note: MicroPython for the Raspberry Pi Pico is board specific. There are different MicroPython versions for the Pico and the Pico W. When saving the firmware, make sure you save the correct version to the board, otherwise important libraries for networking will be missing.
+    3. install MicroPython on the Pico W
+        1. copy the downloaded .uf2 file to the RPI-RP2 drive.
+        2. the file is then copied to the Pico W drive. The drive then logs off and disappears from view.
 
-The program can be interrupted by pressing the key combination Ctrl + C twice.
+The MicroPython firmware is automatically installed to the Pico W's internal memory. MicroPython then runs there and remains in memory until the firmware is replaced by another.
+The firmware files can also be found in this project repository under /pi_pico_w_firmware.
 
-## Quick Start Guide (Frontend)
+### __2. Flashing the project to the microcontroller__
+***
+To install the software on the Pi Pico W you should follow the following steps:
+    1. Open up Thonny IDE and make sure, the Pi Pico W is connected and is recognized
+    2. Navigate with Thonny's File Explorer for your desktop system to the project folder
+    3. Navigate into the backend project /de.hhn.gnns_rtk_rover_suite/de.hhn.gnss_rtk_rover
+    4. Before flashing the project, you should set credentials and configurations inside the de.hhn..gnss_rtk_rover/utils/globals.py
+       for Wi-Fi, NTRIP and UART connections
+            Important: it is recommended to leave the baud rates, as they are set in the project. So it is necessary to change the baud configuration of the ZED-F9P through ![u-blox center](https://www.u-blox.com/en/product/u-center), ![PyGpsClient](https://github.com/semuconsulting/PyGPSClient) or similar program, that can set configurations of u-blox products. Save the configuration to the BBR-Layer, so that it persists between power cycles
+    5. Nox you can flash the project to the root-folder of the Pi Pico W
+    6. As long as you are in development it is recommended to name the main entry file of the program NOT "main.py". If you use "main.py" the
+       micropython interpreter will start the program automatically on boot-up and block any access over USB afterwards. To reset the Pi Pico W you need to connect it in BOOTSEL mode copy the file flash_nuke.uf2 and then the .uf2 Firmware. Both files can be found in this repository under /pi_pico_w_firmware
 
-* To set up the frontend simply install the __apk that is found under \gnss-navigation-status\frontend\app\release__ or under Releases (Version 1.0)
 
-* When you first open the app you have to configure the ip address of your raspberry pi in the settings tab. After clicking the connect Button a connection should be established.
 
-* In order to configure which satellite systems should be used you can check or uncheck them under the Settings Tab
+### __2. Installing Android Application__
+***
+* To set up the frontend simply install the apk that is found under \bin
 
-* In order to use RTCM correction you have to run an ntrip client and connect to a base station (see [RTCM Chapter](#rtcm-and-ntrip-configuration)) and you need to activate it in the app in the Settings Tab
+### __3. Starting the system__
+***
+* Configure a Tethering Hotspot on your Android Device, with the credentials, that you set in the backend project in the globals.py file
+* Start the rover application from the Thonny IDE or rename the main file to main.py, so that it runs in autonomous mode after the next power
+  cycle
+* As soon as the builtin LED of the Pi Pico W starts blinking, it means that the microcontroller was able to connect to an Wi-Fi access point
+* Now the app is ready to use!
+* Alternitavely you can test the rover through the browser. You just need to know his IP. Visit ws://roverip/wstest.html to get live position data on your browser
 
-## RTCM and NTRIP Configuration
-
-If you want to use RTCM corrections you have to install an ntrip client on your raspberry pi or laptop. I used rtknavi from the rtklib which can be downloaded from http://www.rtklib.com/
-
-By clicking on the "I" on the top you can create a new input stream.
-
-![Input Streams](https://raw.githubusercontent.com/alschube/Bachelorarbeit/dev/LaTeX%20Vorlage/Bilder/Screenshot%202021-08-20%20124812.png?token=AN4NRRP5MW5L5CLGIS7QPHLBLL4R6)
-
-First you have to set the _'Transmit NMEA GPGGA to Base Station'_ to _'Latitude/Longitude'_ and provide your current position as accurate as possible (e.g. the position calculated by the app).
-Also check _'(2) Base Station'_, select _'NTRIP Client'_ as type and click on the first '...' Button.
-
-![NTRIP Client Options](https://raw.githubusercontent.com/alschube/Bachelorarbeit/dev/LaTeX%20Vorlage/Bilder/Screenshot%202021-08-20%20124836.png?token=AN4NRRJBJMMYIJWRX54NUJ3BLL4TQ)
-
-There you have to enter your credentials and the Mountpoint you wish to use.
-If you click on _'Ntrip...'_ you can select the desired Mountpoint from a list, copy and paste it into the input field.
-
-After that you need to output the received RTCM data. For that you have to click on the "L" Button in the upper right corner.
-
-![Log Streams](https://raw.githubusercontent.com/alschube/Bachelorarbeit/dev/LaTeX%20Vorlage/Bilder/Screenshot%202021-08-20%20124906.png?token=AN4NRRJLSGCLOYDHNXH3AKTBLL4US)
-
-Check _'(7) Base Station'_ and _'TCP Client'_ as type. Open the Options by clicking on the '...' Button right beside it.
-There you have to type your raspberry pi's ip address and the port of the TCP Server (the backend) 8766.
-
-![TCP Client Options](https://raw.githubusercontent.com/alschube/Bachelorarbeit/dev/LaTeX%20Vorlage/Bilder/Screenshot%202021-08-20%20124917.png?token=AN4NRRKMK7X56V4HBM7EZ2DBLL4VW)
-
-You can confirm and go back to the main window.
-If you click start, the Ntrip client tries to communicate with the base station and transmitts your position in order to get correction data. This can take up to some minutes. If you see bars in the diagram in the center below, it is working.
-
-You can now activate rtcm in the app (if not already done) and see how the calculated position gets more and more accurate.
-
-## Links
-
-[Github - Qwiic Ublox Gps Py](https://github.com/sparkfun/Qwiic_Ublox_Gps_Py/)
-
-[SparkFun Hookup Guide](https://learn.sparkfun.com/tutorials/sparkfun-gps-rtk-dead-reckoning-zed-f9r-hookup-guide/introduction)
-
-[RTKLIB Manual](http://www.rtklib.com/prog/manual_2.4.2.pdf)
-
-[ZED-F9R Integrationmanual](https://cdn.sparkfun.com/assets/learn_tutorials/1/1/7/2/ZED-F9R_Integrationmanual__UBX-20039643_.pdf)
-
-[ZED-F9R Module Overview and Resources](https://www.u-blox.com/en/product/zed-f9r-module)
+<!-- ACKNOWLEDGMENTS -->
+## Acknowledgments
+The Following external Libraries were used in this Project
+* [Python GNSS Libraries](https://github.com/semuconsulting) by SEMU Consulting
+* [https://github.com/jczic/MicroWebSrv](https://github.com/jczic) by Jean-Christophe Bos
 

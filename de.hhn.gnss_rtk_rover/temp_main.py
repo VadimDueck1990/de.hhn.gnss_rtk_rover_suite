@@ -4,7 +4,7 @@ import uasyncio
 from machine import UART, Pin
 from uasyncio import Event, Lock
 from utils.wifi_manager import WiFiManager
-from utils.globals import WIFI_SSID, WIFI_PW
+from utils.globals import WIFI_SSID, WIFI_PW, BAUD_UART1, BAUD_UART2
 from utils.mem_debug import debug_gc
 from gnss.gnss_handler import GnssHandler
 from serial_communication.uart_writer import UartWriter
@@ -38,10 +38,10 @@ async def init():
     msg_q = Queue(maxsize=5)
     pos_q = Queue(maxsize=1)
 
-    uart_rtcm = UART(1, 38400, timeout=500)
+    uart_rtcm = UART(1, BAUD_UART2, timeout=500)
     uart_rtcm.init(bits=8, parity=None, stop=1, tx=rtcmTx, rx=rtcmRx, rxbuf=4096, txbuf=4096)
 
-    uart_ubx_nmea = UART(0, 115200, timeout=500)
+    uart_ubx_nmea = UART(0, BAUD_UART1, timeout=500)
     uart_ubx_nmea.init(bits=8, parity=None, stop=1, tx=masterTx, rx=masterRx, rxbuf=8192, txbuf=4096)
 
     sreader = uasyncio.StreamWriter(uart_ubx_nmea)
